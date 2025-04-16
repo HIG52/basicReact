@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/layout/Layout';
-import Board from './pages/Board';
-import QnA from './pages/QnA';
-import Notice from './pages/Notice';
-import Main from './pages/Main';
+import Board from './pages/board/Board';
+import QnA from './pages/qna/QnA';
+import Notice from './pages/notice/Notice';
+import Main from './pages/main/Main';
 
 const App: React.FC = () => {
   return (

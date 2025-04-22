@@ -1,7 +1,57 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../styles/pages.css';
+import Pagination from '../../components/Pagination';
+import { apiService } from '../../services/api';
+
+interface Notice {
+  id: number;
+  title: string;
+  content: string;
+  category: string;
+  createdAt: string;
+  viewCount: number;
+}
 
 const Notice: React.FC = () => {
+  const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [notices, setNotices] = useState<Notice[]>([]);
+  const [totalItems, setTotalItems] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const itemsPerPage = 10;
+
+  useEffect(() => {
+    fetchNotices();
+  }, [currentPage]);
+
+  const fetchNotices = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await apiService.getNotices(currentPage, itemsPerPage);
+      setNotices(response);
+      setTotalItems(response.length);
+    } catch (error) {
+      setError('공지사항을 불러오는데 실패했습니다.');
+      console.error('Error fetching notices:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleNoticeClick = (noticeId: number) => {
+    navigate(`/notices/${noticeId}`);
+  };
+
+  if (loading) return <div className="loading">로딩중...</div>;
+  if (error) return <div className="error">{error}</div>;
+
   return (
     <div className="page-container">
       <div className="page-header">
@@ -28,48 +78,35 @@ const Notice: React.FC = () => {
           </div>
           
           <div className="notice-list">
-            <div className="notice-item important">
-              <div className="notice-title">
-                <span className="badge">중요</span>
-                <h3>시스템 점검 안내 (4/15 02:00-06:00)</h3>
+            {notices.map((notice) => (
+              <div 
+                key={notice.id} 
+                className={`notice-item ${notice.category === '중요' ? 'important' : ''}`}
+                onClick={() => handleNoticeClick(notice.id)}
+              >
+                <div className="notice-title">
+                  {notice.category && (
+                    <span className={`badge ${notice.category.toLowerCase()}`}>
+                      {notice.category}
+                    </span>
+                  )}
+                  <h3>{notice.title}</h3>
+                </div>
+                <div className="notice-info">
+                  <span>작성일: {notice.createdAt}</span>
+                  <span>조회수: {notice.viewCount}</span>
+                </div>
               </div>
-              <div className="notice-info">
-                <span>작성일: 2024-04-10</span>
-                <span>조회수: 156</span>
-              </div>
-            </div>
-            
-            <div className="notice-item">
-              <div className="notice-title">
-                <span className="badge update">업데이트</span>
-                <h3>신규 기능 업데이트 안내</h3>
-              </div>
-              <div className="notice-info">
-                <span>작성일: 2024-04-08</span>
-                <span>조회수: 89</span>
-              </div>
-            </div>
-            
-            <div className="notice-item">
-              <div className="notice-title">
-                <h3>이용약관 개정 안내</h3>
-              </div>
-              <div className="notice-info">
-                <span>작성일: 2024-04-05</span>
-                <span>조회수: 234</span>
-              </div>
-            </div>
+            ))}
           </div>
           
-          <div className="board-pagination">
-            <button className="pagination-btn">&lt;</button>
-            <button className="pagination-btn active">1</button>
-            <button className="pagination-btn">2</button>
-            <button className="pagination-btn">3</button>
-            <button className="pagination-btn">4</button>
-            <button className="pagination-btn">5</button>
-            <button className="pagination-btn">&gt;</button>
-          </div>
+          <Pagination
+            totalItems={totalItems}
+            itemsPerPage={itemsPerPage}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+            pageCount={Math.ceil(totalItems / itemsPerPage)}
+          />
         </div>
       </div>
     </div>

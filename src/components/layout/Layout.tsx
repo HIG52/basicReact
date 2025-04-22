@@ -15,7 +15,7 @@ const Layout: React.FC = () => {
             <li><Link to="/" className={location.pathname === '/' ? 'active' : ''}>Home</Link></li>
             <li><Link to="/board" className={location.pathname === '/board' ? 'active' : ''}>자유게시판</Link></li>
             <li><Link to="/qna" className={location.pathname === '/qna' ? 'active' : ''}>Q&A</Link></li>
-            <li><Link to="/notice" className={location.pathname === '/notice' ? 'active' : ''}>공지사항</Link></li>
+            <li><Link to="/notices" className={location.pathname === '/notices' ? 'active' : ''}>공지사항</Link></li>
           </ul>
         </div>
       </header>

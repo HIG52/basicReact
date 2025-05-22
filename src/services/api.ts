@@ -1,13 +1,12 @@
 import axios from 'axios';
 import { MainResponse } from '../types/api';
 
-const API_BASE_URL = ''; // 프록시를 사용하므로 빈 문자열로 설정
+const API_BASE_URL = '';
 
 interface Notice {
   id: number;
   title: string;
   content: string;
-  category: string;
   createdAt: string;
   viewCount: number;
 }

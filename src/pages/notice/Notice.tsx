@@ -8,7 +8,6 @@ interface Notice {
   id: number;
   title: string;
   content: string;
-  category: string;
   createdAt: string;
   viewCount: number;
 }
@@ -70,27 +69,14 @@ const Notice: React.FC = () => {
             </div>
           </div>
           
-          <div className="notice-categories">
-            <button className="category-btn active">전체</button>
-            <button className="category-btn">중요</button>
-            <button className="category-btn">일반</button>
-            <button className="category-btn">업데이트</button>
-          </div>
-          
           <div className="notice-list">
             {notices.map((notice) => (
               <div 
                 key={notice.id} 
-                className={`notice-item ${notice.category === '중요' ? 'important' : ''}`}
+                className={`notice-item`}
                 onClick={() => handleNoticeClick(notice.id)}
               >
                 <div className="notice-title">
-                  {notice.category && (
-                    <span className={`badge ${notice.category.toLowerCase()}`}>
-                      {notice.category}
-                    </span>
-                  )}
-                  <h3>{notice.title}</h3>
                 </div>
                 <div className="notice-info">
                   <span>작성일: {notice.createdAt}</span>

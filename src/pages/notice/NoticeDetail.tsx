@@ -7,7 +7,6 @@ interface NoticeDetail {
   id: number;
   title: string;
   content: string;
-  category: string;
   createdAt: string;
   viewCount: number;
 }
@@ -59,11 +58,6 @@ const NoticeDetail: React.FC = () => {
         <div className="notice-detail-container">
           <div className="notice-detail-header">
             <div className="notice-detail-title">
-              {notice.category && (
-                <span className={`badge ${notice.category.toLowerCase()}`}>
-                  {notice.category}
-                </span>
-              )}
               <h2>{notice.title}</h2>
             </div>
             <div className="notice-detail-info">

@@ -7,7 +7,6 @@ const Layout: React.FC = () => {
 
   return (
     <div>
-      {/* 헤더 */}
       <header>
         <div className="container header-container">
           <Link to="/" className="logo">MCST</Link> 
@@ -24,7 +23,6 @@ const Layout: React.FC = () => {
         <Outlet />
       </main>
 
-      {/* 푸터 */}
       <footer>
         <div className="container">
           <div className="footer-top">

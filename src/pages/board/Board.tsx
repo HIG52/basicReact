@@ -21,14 +21,6 @@ const Board: React.FC = () => {
             <button className="write-btn">글쓰기</button>
           </div>
           
-          <div className="board-categories">
-            <button className="category-btn active">전체</button>
-            <button className="category-btn">일반</button>
-            <button className="category-btn">질문</button>
-            <button className="category-btn">정보</button>
-            <button className="category-btn">토론</button>
-          </div>
-          
           <table className="board-table">
             <thead>
               <tr>

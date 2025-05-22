@@ -21,13 +21,6 @@ const QnA: React.FC = () => {
             <button className="write-btn">질문하기</button>
           </div>
           
-          <div className="qna-categories">
-            <button className="category-btn active">전체</button>
-            <button className="category-btn">답변완료</button>
-            <button className="category-btn">답변대기</button>
-            <button className="category-btn">인기질문</button>
-          </div>
-          
           <div className="qna-list">
             <div className="qna-item">
               <div className="qna-title">

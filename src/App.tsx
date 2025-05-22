@@ -6,6 +6,10 @@ import QnA from './pages/qna/QnA';
 import Notice from './pages/notice/Notice';
 import NoticeDetail from './pages/notice/NoticeDetail';
 import Main from './pages/main/Main';
+import AdminMain from './pages/admin/AdminMain';
+import NoticeAdmin from './pages/admin/NoticeAdmin';
+import BoardAdmin from './pages/admin/BoardAdmin';
+import UserAdmin from './pages/admin/UserAdmin';
 
 const App: React.FC = () => {
   return (
@@ -18,6 +22,10 @@ const App: React.FC = () => {
           <Route path="notices" element={<Notice />} />
           <Route path="notices/:id" element={<NoticeDetail />} />
         </Route>
+        <Route path="/admin" element={<AdminMain />} />
+        <Route path="/admin/notice" element={<NoticeAdmin />} />
+        <Route path="/admin/board" element={<BoardAdmin />} />
+        <Route path="/admin/user" element={<UserAdmin />} />
       </Routes>
     </Router>
   );

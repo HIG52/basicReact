@@ -1,49 +1,83 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../styles/pages.css';
+import { apiService } from '../../services/api';
 
 interface User {
   id: number;
   name: string;
   email: string;
   joinDate: string;
+  role: string;
 }
 
-const initialUsers: User[] = [
-  { id: 1, name: '홍길동', email: 'hong@test.com', joinDate: '2024-04-01' },
-  { id: 2, name: '김철수', email: 'kim@test.com', joinDate: '2024-04-02' },
-];
-
 const UserAdmin: React.FC = () => {
-  const [users, setUsers] = useState<User[]>(initialUsers);
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const pageSize = 5;
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [role, setRole] = useState('user');
+  const navigate = useNavigate();
 
-  const handleDelete = (id: number) => {
-    setUsers(users.filter(user => user.id !== id));
+  const fetchUsers = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const res = await apiService.getUserList(page, pageSize, search);
+      if (res.success) {
+        setUsers(res.data?.list || []);
+      } else {
+        setError(res.message);
+      }
+    } catch (e) {
+      setError('회원 목록을 불러오지 못했습니다.');
+    }
+    setLoading(false);
   };
 
-  const handleAdd = () => {
+  useEffect(() => {
+    fetchUsers();
+    // eslint-disable-next-line
+  }, [page, search]);
+
+  const handleDelete = async (id: number) => {
+    if (!window.confirm('정말 삭제하시겠습니까?')) return;
+    const res = await apiService.deleteUser(id);
+    if (res.success) {
+      fetchUsers();
+    } else {
+      alert(res.message || '삭제 실패');
+    }
+  };
+
+  const handleAdd = async () => {
     if (!name.trim() || !email.trim()) return;
-    const newUser: User = {
-      id: users.length ? users[0].id + 1 : 1,
-      name,
-      email,
-      joinDate: new Date().toISOString().slice(0, 10),
-    };
-    setUsers([newUser, ...users]);
-    setName('');
-    setEmail('');
+    const res = await apiService.createUser({ name, email, role });
+    if (res.success) {
+      setName('');
+      setEmail('');
+      setRole('user');
+      fetchUsers();
+    } else {
+      alert(res.message || '회원 추가 실패');
+    }
   };
 
-  const filteredUsers = users.filter(u => u.name.includes(search) || u.email.includes(search));
+  const totalPages = 1; // 서버에서 totalPages 받아오면 적용
+
+  if (loading) return <div>로딩중...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="page-container">
       <div className="page-header">
         <div className="container">
           <h1>회원 관리</h1>
-          <p className="page-description">회원 정보를 추가, 삭제할 수 있습니다.</p>
+          <p className="page-description">회원 정보를 추가, 삭제, 상세, 수정할 수 있습니다.</p>
         </div>
       </div>
       <div className="container">
@@ -77,6 +111,10 @@ const UserAdmin: React.FC = () => {
               onChange={e => setEmail(e.target.value)}
               style={{ flex: 1 }}
             />
+            <select className="search-input" value={role} onChange={e => setRole(e.target.value)} style={{ flex: 1 }}>
+              <option value="user">일반회원</option>
+              <option value="admin">관리자</option>
+            </select>
             <button className="write-btn" onClick={handleAdd}>회원 추가</button>
           </div>
           <table className="board-table">
@@ -85,20 +123,28 @@ const UserAdmin: React.FC = () => {
                 <th>번호</th>
                 <th>이름</th>
                 <th>이메일</th>
+                <th>회원구분</th>
                 <th>가입일</th>
+                <th>상세</th>
                 <th>삭제</th>
               </tr>
             </thead>
             <tbody>
-              {filteredUsers.length === 0 ? (
-                <tr><td colSpan={5}>회원이 없습니다.</td></tr>
+              {users.length === 0 ? (
+                <tr><td colSpan={7}>회원이 없습니다.</td></tr>
               ) : (
-                filteredUsers.map((user, idx) => (
+                users.map((user) => (
                   <tr key={user.id}>
                     <td>{user.id}</td>
                     <td>{user.name}</td>
                     <td>{user.email}</td>
+                    <td>{user.role === 'admin' ? '관리자' : '일반회원'}</td>
                     <td>{user.joinDate}</td>
+                    <td>
+                      <button className="search-btn" onClick={() => navigate(`/admin/user/${user.id}`)}>
+                        상세
+                      </button>
+                    </td>
                     <td>
                       <button className="search-btn" onClick={() => handleDelete(user.id)}>
                         삭제
@@ -109,6 +155,19 @@ const UserAdmin: React.FC = () => {
               )}
             </tbody>
           </table>
+          {/* 페이징 */}
+          <div style={{ display: 'flex', justifyContent: 'center', margin: '16px 0', gap: 4 }}>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i + 1}
+                className={page === i + 1 ? 'write-btn' : 'search-btn'}
+                onClick={() => setPage(i + 1)}
+                style={{ minWidth: 32 }}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>

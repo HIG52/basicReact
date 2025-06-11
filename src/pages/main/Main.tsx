@@ -10,7 +10,11 @@ const Main: React.FC = () => {
         const fetchMessage = async () => {
             try {
                 const response = await apiService.getMainMessage();
-                setMessage(response.message);
+                if (response.success) {
+                    setMessage(response.data?.mainMessage || response.message);
+                } else {
+                    setMessage(response.message);
+                }
             } catch (error) {
                 console.error('Error fetching message:', error);
                 setMessage('Error loading message');

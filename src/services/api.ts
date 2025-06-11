@@ -20,21 +20,22 @@ interface NoticeListResponse {
 }
 
 export const apiService = {
-    getMainMessage: async (): Promise<MainResponse> => {
+    getMainMessage: async (): Promise<{ success: boolean; message: string; data: any }> => {
         try {
-            console.log('Calling API...');
-            const response = await axios.get<MainResponse>(`${API_BASE_URL}/main`);
-            console.log('API Response:', response.data);
+            const response = await axios.get(`${API_BASE_URL}/main`);
             return response.data;
         } catch (error) {
-            console.error('API Error:', error);
-            throw error;
+            return {
+                success: false,
+                message: '메인 메시지 조회 실패',
+                data: null
+            };
         }
     },
 
-    getNotices: async (page: number, size: number = 10): Promise<Notice[]> => {
+    getNotices: async (page: number, size: number = 10): Promise<{ success: boolean; message: string; data: any }> => {
         try {
-            const response = await axios.get<Notice[]>(`${API_BASE_URL}/notices`, {
+            const response = await axios.get(`${API_BASE_URL}/notices`, {
                 params: {
                     page,
                     size
@@ -42,18 +43,76 @@ export const apiService = {
             });
             return response.data;
         } catch (error) {
-            console.error('공지사항 목록 조회 실패:', error);
-            throw error;
+            return {
+                success: false,
+                message: '공지사항 목록 조회 실패',
+                data: null
+            };
         }
     },
 
-    getNoticeDetail: async (id: number): Promise<Notice> => {
+    getNoticeDetail: async (id: number): Promise<{ success: boolean; message: string; data: any }> => {
         try {
-            const response = await axios.get<Notice>(`${API_BASE_URL}/notices/${id}`);
+            const response = await axios.get(`${API_BASE_URL}/notices/${id}`);
             return response.data;
         } catch (error) {
-            console.error('공지사항 상세 조회 실패:', error);
-            throw error;
+            return {
+                success: false,
+                message: '공지사항 상세 조회 실패',
+                data: null
+            };
+        }
+    },
+
+    login: async (email: string, password: string): Promise<{ success: boolean; message: string; data?: any }> => {
+        try {
+            const response = await axios.post(`${API_BASE_URL}/login`, { email, password });
+            return response.data;
+        } catch (error: any) {
+            return {
+                success: false,
+                message: error?.response?.data?.message || '로그인 실패',
+            };
+        }
+    },
+
+    signUp: async (name: string, email: string, password: string): Promise<{ success: boolean; message: string; data?: any }> => {
+        try {
+            const response = await axios.post(`${API_BASE_URL}/signup`, { name, email, password });
+            return response.data;
+        } catch (error: any) {
+            return {
+                success: false,
+                message: error?.response?.data?.message || '회원가입 실패',
+            };
+        }
+    },
+
+    getQnaList: async (page: number = 1, size: number = 10, search: string = ''): Promise<{ success: boolean; message: string; data?: any }> => {
+        try {
+            const response = await axios.get(`${API_BASE_URL}/qna`, {
+                params: { page, size, search }
+            });
+            return response.data;
+        } catch (error: any) {
+            return {
+                success: false,
+                message: error?.response?.data?.message || 'Q&A 목록 조회 실패',
+            };
+        }
+    },
+
+    getBoardList: async (page: number = 1, size: number = 10, search: string = ''): Promise<{ success: boolean; message: string; data?: any }> => {
+        try {
+            const response = await axios.get(`${API_BASE_URL}/board`, {
+                params: { page, size, search }
+            });
+            return response.data;
+        } catch (error: any) {
+            return {
+                success: false,
+                message: error?.response?.data?.message || '자유게시판 목록 조회 실패',
+            };
         }
     }
 }; 

@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
 import '../../styles/pages.css';
+import { apiService } from '../../services/api';
 
 interface Notice {
   id: number;
@@ -9,34 +11,50 @@ interface Notice {
   views: number;
 }
 
-const initialNotices: Notice[] = [
-  { id: 1, title: '공지사항 예시입니다.', author: '관리자', date: '2024-04-10', views: 100 },
-  { id: 2, title: '두 번째 공지사항', author: '관리자', date: '2024-04-09', views: 80 },
-];
-
 const NoticeAdmin: React.FC = () => {
-  const [notices, setNotices] = useState<Notice[]>(initialNotices);
+  const [notices, setNotices] = useState<Notice[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [search, setSearch] = useState('');
-  const [title, setTitle] = useState('');
+  const [page, setPage] = useState(1);
+  const pageSize = 5;
+  const navigate = useNavigate();
 
-  const handleDelete = (id: number) => {
-    setNotices(notices.filter(notice => notice.id !== id));
+  const fetchNotices = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const res = await apiService.getNotices(page, pageSize);
+      if (res.success) {
+        setNotices(res.data?.notices || []);
+      } else {
+        setError(res.message);
+      }
+    } catch (e) {
+      setError('공지사항 목록을 불러오지 못했습니다.');
+    }
+    setLoading(false);
   };
 
-  const handleAdd = () => {
-    if (!title.trim()) return;
-    const newNotice: Notice = {
-      id: notices.length ? notices[0].id + 1 : 1,
-      title,
-      author: '관리자',
-      date: new Date().toISOString().slice(0, 10),
-      views: 0,
-    };
-    setNotices([newNotice, ...notices]);
-    setTitle('');
+  useEffect(() => {
+    fetchNotices();
+    // eslint-disable-next-line
+  }, [page, search]);
+
+  const handleDelete = async (id: number) => {
+    if (!window.confirm('정말 삭제하시겠습니까?')) return;
+    const res = await apiService.deleteNotice(id);
+    if (res.success) {
+      fetchNotices();
+    } else {
+      alert(res.message || '삭제 실패');
+    }
   };
 
-  const filteredNotices = notices.filter(n => n.title.includes(search));
+  const totalPages = 1; // 서버에서 totalPages 받아오면 적용
+
+  if (loading) return <div>로딩중...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="page-container">
@@ -61,15 +79,7 @@ const NoticeAdmin: React.FC = () => {
             </div>
           </div>
           <div style={{ display: 'flex', gap: 8, margin: '16px 0' }}>
-            <input
-              type="text"
-              placeholder="공지사항 제목 입력"
-              className="search-input"
-              value={title}
-              onChange={e => setTitle(e.target.value)}
-              style={{ flex: 1 }}
-            />
-            <button className="write-btn" onClick={handleAdd}>공지사항 작성</button>
+            <button className="write-btn" style={{ flex: 1 }} onClick={() => navigate('/admin/notice/write')}>공지사항 작성</button>
           </div>
           <table className="board-table">
             <thead>
@@ -83,13 +93,13 @@ const NoticeAdmin: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredNotices.length === 0 ? (
+              {notices.length === 0 ? (
                 <tr><td colSpan={6}>공지사항이 없습니다.</td></tr>
               ) : (
-                filteredNotices.map((notice, idx) => (
+                notices.map((notice) => (
                   <tr key={notice.id}>
                     <td>{notice.id}</td>
-                    <td>{notice.title}</td>
+                    <td style={{ cursor: 'pointer', color: '#1976d2' }} onClick={() => navigate(`/admin/notice/${notice.id}`)}>{notice.title}</td>
                     <td>{notice.author}</td>
                     <td>{notice.date}</td>
                     <td>{notice.views}</td>
@@ -103,6 +113,19 @@ const NoticeAdmin: React.FC = () => {
               )}
             </tbody>
           </table>
+          {/* 페이징 */}
+          <div style={{ display: 'flex', justifyContent: 'center', margin: '16px 0', gap: 4 }}>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i + 1}
+                className={page === i + 1 ? 'write-btn' : 'search-btn'}
+                onClick={() => setPage(i + 1)}
+                style={{ minWidth: 32 }}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>

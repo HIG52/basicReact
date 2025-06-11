@@ -114,5 +114,199 @@ export const apiService = {
                 message: error?.response?.data?.message || '자유게시판 목록 조회 실패',
             };
         }
+    },
+
+    getBoardDetail: async (id: number): Promise<{ success: boolean; message: string; data?: any }> => {
+        try {
+            const response = await axios.get(`${API_BASE_URL}/board/${id}`);
+            return response.data;
+        } catch (error: any) {
+            return {
+                success: false,
+                message: error?.response?.data?.message || '자유게시판 상세 조회 실패',
+            };
+        }
+    },
+
+    createBoard: async (data: { title: string; content?: string }): Promise<{ success: boolean; message: string; data?: any }> => {
+        try {
+            const response = await axios.post(`${API_BASE_URL}/board`, data);
+            return response.data;
+        } catch (error: any) {
+            return {
+                success: false,
+                message: error?.response?.data?.message || '자유게시판 작성 실패',
+            };
+        }
+    },
+
+    updateBoard: async (id: number, data: { title: string; content?: string }): Promise<{ success: boolean; message: string; data?: any }> => {
+        try {
+            const response = await axios.put(`${API_BASE_URL}/board/${id}`, data);
+            return response.data;
+        } catch (error: any) {
+            return {
+                success: false,
+                message: error?.response?.data?.message || '자유게시판 수정 실패',
+            };
+        }
+    },
+
+    deleteBoard: async (id: number): Promise<{ success: boolean; message: string; data?: any }> => {
+        try {
+            const response = await axios.delete(`${API_BASE_URL}/board/${id}`);
+            return response.data;
+        } catch (error: any) {
+            return {
+                success: false,
+                message: error?.response?.data?.message || '자유게시판 삭제 실패',
+            };
+        }
+    },
+
+    getQnaDetail: async (id: number): Promise<{ success: boolean; message: string; data?: any }> => {
+        try {
+            const response = await axios.get(`${API_BASE_URL}/qna/${id}`);
+            return response.data;
+        } catch (error: any) {
+            return {
+                success: false,
+                message: error?.response?.data?.message || 'Q&A 상세 조회 실패',
+            };
+        }
+    },
+
+    createQna: async (data: { title: string; content?: string }): Promise<{ success: boolean; message: string; data?: any }> => {
+        try {
+            const response = await axios.post(`${API_BASE_URL}/qna`, data);
+            return response.data;
+        } catch (error: any) {
+            return {
+                success: false,
+                message: error?.response?.data?.message || 'Q&A 작성 실패',
+            };
+        }
+    },
+
+    updateQna: async (id: number, data: { title: string; content?: string }): Promise<{ success: boolean; message: string; data?: any }> => {
+        try {
+            const response = await axios.put(`${API_BASE_URL}/qna/${id}`, data);
+            return response.data;
+        } catch (error: any) {
+            return {
+                success: false,
+                message: error?.response?.data?.message || 'Q&A 수정 실패',
+            };
+        }
+    },
+
+    deleteQna: async (id: number): Promise<{ success: boolean; message: string; data?: any }> => {
+        try {
+            const response = await axios.delete(`${API_BASE_URL}/qna/${id}`);
+            return response.data;
+        } catch (error: any) {
+            return {
+                success: false,
+                message: error?.response?.data?.message || 'Q&A 삭제 실패',
+            };
+        }
+    },
+
+    createNotice: async (data: { title: string; content?: string }): Promise<{ success: boolean; message: string; data?: any }> => {
+        try {
+            const response = await axios.post(`${API_BASE_URL}/notices`, data);
+            return response.data;
+        } catch (error: any) {
+            return {
+                success: false,
+                message: error?.response?.data?.message || '공지사항 작성 실패',
+            };
+        }
+    },
+
+    updateNotice: async (id: number, data: { title: string; content?: string }): Promise<{ success: boolean; message: string; data?: any }> => {
+        try {
+            const response = await axios.put(`${API_BASE_URL}/notices/${id}`, data);
+            return response.data;
+        } catch (error: any) {
+            return {
+                success: false,
+                message: error?.response?.data?.message || '공지사항 수정 실패',
+            };
+        }
+    },
+
+    deleteNotice: async (id: number): Promise<{ success: boolean; message: string; data?: any }> => {
+        try {
+            const response = await axios.delete(`${API_BASE_URL}/notices/${id}`);
+            return response.data;
+        } catch (error: any) {
+            return {
+                success: false,
+                message: error?.response?.data?.message || '공지사항 삭제 실패',
+            };
+        }
+    },
+
+    getUserList: async (page: number = 1, size: number = 10, search: string = ''): Promise<{ success: boolean; message: string; data?: any }> => {
+        try {
+            const response = await axios.get(`${API_BASE_URL}/users`, {
+                params: { page, size, search }
+            });
+            return response.data;
+        } catch (error: any) {
+            return {
+                success: false,
+                message: error?.response?.data?.message || '회원 목록 조회 실패',
+            };
+        }
+    },
+
+    createUser: async (data: { name: string; email: string; role: string }): Promise<{ success: boolean; message: string; data?: any }> => {
+        try {
+            const response = await axios.post(`${API_BASE_URL}/users`, data);
+            return response.data;
+        } catch (error: any) {
+            return {
+                success: false,
+                message: error?.response?.data?.message || '회원 추가 실패',
+            };
+        }
+    },
+
+    deleteUser: async (id: number): Promise<{ success: boolean; message: string; data?: any }> => {
+        try {
+            const response = await axios.delete(`${API_BASE_URL}/users/${id}`);
+            return response.data;
+        } catch (error: any) {
+            return {
+                success: false,
+                message: error?.response?.data?.message || '회원 삭제 실패',
+            };
+        }
+    },
+
+    getUserDetail: async (id: number): Promise<{ success: boolean; message: string; data?: any }> => {
+        try {
+            const response = await axios.get(`${API_BASE_URL}/users/${id}`);
+            return response.data;
+        } catch (error: any) {
+            return {
+                success: false,
+                message: error?.response?.data?.message || '회원 상세 조회 실패',
+            };
+        }
+    },
+
+    updateUser: async (id: number, data: { name: string; email: string; role: string }): Promise<{ success: boolean; message: string; data?: any }> => {
+        try {
+            const response = await axios.put(`${API_BASE_URL}/users/${id}`, data);
+            return response.data;
+        } catch (error: any) {
+            return {
+                success: false,
+                message: error?.response?.data?.message || '회원 수정 실패',
+            };
+        }
     }
 }; 

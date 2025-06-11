@@ -30,11 +30,14 @@ const Notice: React.FC = () => {
       setLoading(true);
       setError(null);
       const response = await apiService.getNotices(currentPage, itemsPerPage);
-      setNotices(response);
-      setTotalItems(response.length);
+      if (response.success) {
+        setNotices(response.data?.notices || []);
+        setTotalItems(response.data?.totalItems || 0);
+      } else {
+        setError(response.message);
+      }
     } catch (error) {
       setError('공지사항을 불러오는데 실패했습니다.');
-      console.error('Error fetching notices:', error);
     } finally {
       setLoading(false);
     }

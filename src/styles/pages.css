@@ -446,4 +446,65 @@
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 관리자 네비게이션 바 */
+.admin-header {
+  background: #232946;
+  padding: 0 0 0 0;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.04);
+}
+.admin-header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+.admin-logo {
+  color: #fff;
+  font-size: 24px;
+  font-weight: bold;
+  text-decoration: none;
+  margin-right: 32px;
+}
+.admin-nav-menu {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.admin-nav-menu li a {
+  color: #fff;
+  font-size: 16px;
+  text-decoration: none;
+  padding: 8px 0;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+.admin-nav-menu li a.active {
+  border-bottom: 2px solid #4A99D3;
+  color: #4A99D3;
+}
+
+/* 대시보드 카드 */
+.dashboard-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(44, 62, 80, 0.08);
+  padding: 32px 24px;
+  min-width: 180px;
+  text-align: center;
+  flex: 1;
+}
+.dashboard-value {
+  font-size: 32px;
+  font-weight: bold;
+  color: #232946;
+  margin-bottom: 8px;
+}
+.dashboard-label {
+  font-size: 16px;
+  color: #4A99D3;
+  font-weight: 500;
 } 

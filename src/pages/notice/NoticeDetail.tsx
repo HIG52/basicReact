@@ -28,11 +28,14 @@ const NoticeDetail: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await apiService.getNoticeDetail(noticeId);
-      setNotice(data);
+      const response = await apiService.getNoticeDetail(noticeId);
+      if (response.success) {
+        setNotice(response.data);
+      } else {
+        setError(response.message);
+      }
     } catch (error) {
       setError('공지사항을 불러오는데 실패했습니다.');
-      console.error('Error fetching notice detail:', error);
     } finally {
       setLoading(false);
     }

@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
 import '../../styles/pages.css';
+import { apiService } from '../../services/api';
 
 interface Post {
   id: number;
@@ -15,28 +17,55 @@ const initialPosts: Post[] = [
 ];
 
 const BoardAdmin: React.FC = () => {
-  const [posts, setPosts] = useState<Post[]>(initialPosts);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [search, setSearch] = useState('');
   const [title, setTitle] = useState('');
+  const [page, setPage] = useState(1);
+  const pageSize = 5;
+  const navigate = useNavigate();
 
-  const handleDelete = (id: number) => {
-    setPosts(posts.filter(post => post.id !== id));
+  const fetchPosts = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const res = await apiService.getBoardList(page, pageSize, search);
+      if (res.success) {
+        setPosts(res.data?.list || []);
+      } else {
+        setError(res.message);
+      }
+    } catch (e) {
+      setError('게시글 목록을 불러오지 못했습니다.');
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchPosts();
+    // eslint-disable-next-line
+  }, [page, search]);
+
+  const handleDelete = async (id: number) => {
+    if (!window.confirm('정말 삭제하시겠습니까?')) return;
+    const res = await apiService.deleteBoard(id);
+    if (res.success) {
+      fetchPosts();
+    } else {
+      alert(res.message || '삭제 실패');
+    }
   };
 
   const handleAdd = () => {
-    if (!title.trim()) return;
-    const newPost: Post = {
-      id: posts.length ? posts[0].id + 1 : 1,
-      title,
-      author: '관리자',
-      date: new Date().toISOString().slice(0, 10),
-      views: 0,
-    };
-    setPosts([newPost, ...posts]);
-    setTitle('');
+    navigate('/admin/board/write');
   };
 
-  const filteredPosts = posts.filter(p => p.title.includes(search));
+  const filteredPosts = posts;
+  const totalPages = 1;
+
+  if (loading) return <div>로딩중...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="page-container">
@@ -68,6 +97,7 @@ const BoardAdmin: React.FC = () => {
               value={title}
               onChange={e => setTitle(e.target.value)}
               style={{ flex: 1 }}
+              disabled
             />
             <button className="write-btn" onClick={handleAdd}>게시글 작성</button>
           </div>
@@ -89,7 +119,7 @@ const BoardAdmin: React.FC = () => {
                 filteredPosts.map((post, idx) => (
                   <tr key={post.id}>
                     <td>{post.id}</td>
-                    <td>{post.title}</td>
+                    <td style={{ cursor: 'pointer', color: '#1976d2' }} onClick={() => navigate(`/admin/board/${post.id}`)}>{post.title}</td>
                     <td>{post.author}</td>
                     <td>{post.date}</td>
                     <td>{post.views}</td>
@@ -103,6 +133,19 @@ const BoardAdmin: React.FC = () => {
               )}
             </tbody>
           </table>
+          {/* 페이징 */}
+          <div style={{ display: 'flex', justifyContent: 'center', margin: '16px 0', gap: 4 }}>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i + 1}
+                className={page === i + 1 ? 'write-btn' : 'search-btn'}
+                onClick={() => setPage(i + 1)}
+                style={{ minWidth: 32 }}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>

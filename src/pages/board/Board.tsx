@@ -1,7 +1,42 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import '../../styles/pages.css';
+import { apiService } from '../../services/api';
 
 const Board: React.FC = () => {
+  const [boardList, setBoardList] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [search, setSearch] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+
+  useEffect(() => {
+    fetchBoardList();
+    // eslint-disable-next-line
+  }, [page, search]);
+
+  const fetchBoardList = async () => {
+    setLoading(true);
+    setError('');
+    const res = await apiService.getBoardList(page, 10, search);
+    if (res.success) {
+      setBoardList(res.data.boardList || []);
+      setTotalPages(res.data.pagination?.totalPages || 1);
+    } else {
+      setError(res.message || '자유게시판 목록 조회 실패');
+    }
+    setLoading(false);
+  };
+
+  const handleSearch = () => {
+    setPage(1);
+    setSearch(searchInput);
+  };
+
+  if (loading) return <div className="loading">로딩중...</div>;
+  if (error) return <div className="error">{error}</div>;
+
   return (
     <div className="page-container">
       <div className="page-header">

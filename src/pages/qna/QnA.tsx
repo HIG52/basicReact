@@ -1,7 +1,47 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../styles/pages.css';
+import { apiService } from '../../services/api';
 
 const QnA: React.FC = () => {
+  const [openId, setOpenId] = useState<number | null>(null);
+  const [qnaList, setQnaList] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [search, setSearch] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+
+  useEffect(() => {
+    fetchQnaList();
+    // eslint-disable-next-line
+  }, [page, search]);
+
+  const fetchQnaList = async () => {
+    setLoading(true);
+    setError('');
+    const res = await apiService.getQnaList(page, 10, search);
+    if (res.success) {
+      setQnaList(res.data.qnaList || []);
+      setTotalPages(res.data.pagination?.totalPages || 1);
+    } else {
+      setError(res.message || 'Q&A 목록 조회 실패');
+    }
+    setLoading(false);
+  };
+
+  const handleToggle = (id: number) => {
+    setOpenId(openId === id ? null : id);
+  };
+
+  const handleSearch = () => {
+    setPage(1);
+    setSearch(searchInput);
+  };
+
+  if (loading) return <div className="loading">로딩중...</div>;
+  if (error) return <div className="error">{error}</div>;
+
   return (
     <div className="page-container">
       <div className="page-header">
@@ -15,61 +55,41 @@ const QnA: React.FC = () => {
         <div className="qna-container">
           <div className="qna-header">
             <div className="qna-search">
-              <input type="text" placeholder="검색어를 입력하세요" className="search-input" />
-              <button className="search-btn">검색</button>
+              <input type="text" placeholder="검색어를 입력하세요" className="search-input" value={searchInput} onChange={e => setSearchInput(e.target.value)} />
+              <button className="search-btn" onClick={handleSearch}>검색</button>
             </div>
-            <button className="write-btn">질문하기</button>
           </div>
           
           <div className="qna-list">
-            <div className="qna-item">
-              <div className="qna-title">
-                <span className="status answered">답변완료</span>
-                <h3>React에서 상태관리는 어떻게 하나요?</h3>
+            {qnaList.map((item) => (
+              <div className="qna-item" key={item.id}>
+                <div className="qna-title" style={{ cursor: 'pointer' }} onClick={() => handleToggle(item.id)}>
+                  <span className={`status ${item.status}`}>{
+                    item.status === 'answered' ? '답변완료' : item.status === 'waiting' ? '답변대기' : '인기질문'
+                  }</span>
+                  <h3>{item.title}</h3>
+                </div>
+                <div className="qna-info">
+                  <span>작성자: {item.author}</span>
+                  <span>작성일: {item.date}</span>
+                  <span>조회: {item.views}</span>
+                  <span>답변: {item.answers}</span>
+                </div>
+                {openId === item.id && (
+                  <div className="qna-detail" style={{ background: '#f9f9f9', padding: '16px', marginTop: '8px', borderRadius: '8px' }}>
+                    {item.content}
+                  </div>
+                )}
               </div>
-              <div className="qna-info">
-                <span>작성자: 김철수</span>
-                <span>작성일: 2024-04-10</span>
-                <span>조회: 42</span>
-                <span>답변: 3</span>
-              </div>
-            </div>
-            
-            <div className="qna-item">
-              <div className="qna-title">
-                <span className="status waiting">답변대기</span>
-                <h3>TypeScript 사용시 주의사항이 궁금합니다.</h3>
-              </div>
-              <div className="qna-info">
-                <span>작성자: 이영희</span>
-                <span>작성일: 2024-04-09</span>
-                <span>조회: 28</span>
-                <span>답변: 0</span>
-              </div>
-            </div>
-            
-            <div className="qna-item">
-              <div className="qna-title">
-                <span className="status hot">인기질문</span>
-                <h3>프론트엔드 개발자 취업 준비하기</h3>
-              </div>
-              <div className="qna-info">
-                <span>작성자: 박지성</span>
-                <span>작성일: 2024-04-08</span>
-                <span>조회: 156</span>
-                <span>답변: 12</span>
-              </div>
-            </div>
+            ))}
           </div>
           
           <div className="board-pagination">
-            <button className="pagination-btn">&lt;</button>
-            <button className="pagination-btn active">1</button>
-            <button className="pagination-btn">2</button>
-            <button className="pagination-btn">3</button>
-            <button className="pagination-btn">4</button>
-            <button className="pagination-btn">5</button>
-            <button className="pagination-btn">&gt;</button>
+            <button className="pagination-btn" onClick={() => setPage(page - 1)} disabled={page === 1}>&lt;</button>
+            {[...Array(totalPages)].map((_, idx) => (
+              <button key={idx + 1} className={`pagination-btn${page === idx + 1 ? ' active' : ''}`} onClick={() => setPage(idx + 1)}>{idx + 1}</button>
+            ))}
+            <button className="pagination-btn" onClick={() => setPage(page + 1)} disabled={page === totalPages}>&gt;</button>
           </div>
         </div>
       </div>

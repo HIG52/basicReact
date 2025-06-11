@@ -15,6 +15,8 @@ const Layout: React.FC = () => {
             <li><Link to="/board" className={location.pathname === '/board' ? 'active' : ''}>자유게시판</Link></li>
             <li><Link to="/qna" className={location.pathname === '/qna' ? 'active' : ''}>Q&A</Link></li>
             <li><Link to="/notices" className={location.pathname === '/notices' ? 'active' : ''}>공지사항</Link></li>
+            <li><Link to="/login" className={location.pathname === '/login' ? 'active login-btn' : 'login-btn'}>로그인</Link></li>
+            <li><Link to="/signup" className={location.pathname === '/signup' ? 'active signup-btn' : 'signup-btn'}>회원가입</Link></li>
           </ul>
         </div>
       </header>

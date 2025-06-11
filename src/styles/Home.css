@@ -75,6 +75,42 @@ header {
     color: white;
 }
 
+.nav-menu a.signup-btn {
+  background-color: #4A99D3;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 4px;
+  padding: 0.17rem 0.4rem;
+  margin-left: 1rem;
+  font-size: 0.5rem;
+  transition: background 0.2s;
+}
+
+.nav-menu a.signup-btn:hover,
+.nav-menu a.signup-btn.active {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.nav-menu a.login-btn {
+  background-color: #fff;
+  color: #4A99D3;
+  font-weight: 600;
+  border-radius: 4px;
+  padding: 0.17rem 0.4rem;
+  margin-left: 0.5rem;
+  font-size: 0.5rem;
+  border: 1px solid #4A99D3;
+  transition: background 0.2s, color 0.2s;
+}
+
+.nav-menu a.login-btn:hover,
+.nav-menu a.login-btn.active {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
 /* 메인 콘텐츠 영역 */
 main {
     flex: 1;

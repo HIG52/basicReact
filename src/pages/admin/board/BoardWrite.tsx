@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { apiService } from '../../services/api';
+import { apiService } from '../../../services/api';
 
 const BoardWrite: React.FC = () => {
   const [title, setTitle] = useState('');

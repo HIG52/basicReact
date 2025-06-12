@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import '../../styles/pages.css';
-import { apiService } from '../../services/api';
+import '../../../styles/pages.css';
+import { apiService } from '../../../services/api';
 
 interface Post {
   id: number;

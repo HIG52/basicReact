@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { apiService } from '../../services/api';
+import { apiService } from '../../../services/api';
 
 const QnADetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();

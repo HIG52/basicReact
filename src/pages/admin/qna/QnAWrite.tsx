@@ -1,41 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { apiService } from '../../services/api';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { apiService } from '../../../services/api';
 
-const QnAEdit: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+const QnAWrite: React.FC = () => {
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!id) return;
-      setLoading(true);
-      setError('');
-      const res = await apiService.getQnaDetail(Number(id));
-      setLoading(false);
-      if (res.success && res.data) {
-        setTitle(res.data.title);
-      } else {
-        setError(res.message || '데이터 불러오기 실패');
-      }
-    };
-    fetchData();
-  }, [id]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!id) return;
     setLoading(true);
     setError('');
-    const res = await apiService.updateQna(Number(id), { title });
+    const res = await apiService.createQna({ title });
     setLoading(false);
     if (res.success) {
-      navigate(`/admin/qna/${id}`);
+      navigate('/admin/qna');
     } else {
-      setError(res.message || '수정 실패');
+      setError(res.message || '작성 실패');
     }
   };
 
@@ -43,7 +25,7 @@ const QnAEdit: React.FC = () => {
     <div className="page-container">
       <div className="page-header">
         <div className="container">
-          <h1>Q&A 수정</h1>
+          <h1>Q&A 작성</h1>
         </div>
       </div>
       <div className="container">
@@ -58,8 +40,8 @@ const QnAEdit: React.FC = () => {
             style={{ width: '100%', marginBottom: 16 }}
           />
           <div style={{ display: 'flex', gap: 8 }}>
-            <button type="submit" className="write-btn" disabled={loading}>수정</button>
-            <button type="button" className="search-btn" onClick={() => navigate(`/admin/qna/${id}`)}>취소</button>
+            <button type="submit" className="write-btn" disabled={loading}>작성</button>
+            <button type="button" className="search-btn" onClick={() => navigate('/admin/qna')}>취소</button>
           </div>
         </form>
       </div>
@@ -67,4 +49,4 @@ const QnAEdit: React.FC = () => {
   );
 };
 
-export default QnAEdit; 
+export default QnAWrite; 

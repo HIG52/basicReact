@@ -8,22 +8,12 @@ import Notice from './pages/notice/Notice';
 import NoticeDetail from './pages/notice/NoticeDetail';
 import Main from './pages/main/Main';
 import AdminMain from './pages/admin/AdminMain';
-import NoticeAdmin from './pages/admin/NoticeAdmin';
-import BoardAdmin from './pages/admin/BoardAdmin';
-import UserAdmin from './pages/admin/UserAdmin';
-import QnAAdmin from './pages/admin/QnAAdmin';
+import { NoticeAdmin, NoticeWrite, NoticeEdit } from './pages/admin/notice';
+import { BoardAdmin, BoardWrite, BoardEdit, BoardDetail } from './pages/admin/board';
+import { UserAdmin, UserDetail, UserEdit } from './pages/admin/user';
+import { QnAAdmin, QnAWrite, QnAEdit, QnADetail } from './pages/admin/qna';
 import SignUp from './pages/common/SignUp';
 import Login from './pages/common/Login';
-import BoardWrite from './pages/admin/BoardWrite';
-import BoardEdit from './pages/admin/BoardEdit';
-import BoardDetail from './pages/admin/BoardDetail';
-import QnAWrite from './pages/admin/QnAWrite';
-import QnAEdit from './pages/admin/QnAEdit';
-import QnADetail from './pages/admin/QnADetail';
-import NoticeWrite from './pages/admin/NoticeWrite';
-import NoticeEdit from './pages/admin/NoticeEdit';
-import UserDetail from './pages/admin/UserDetail';
-import UserEdit from './pages/admin/UserEdit';
 
 const App: React.FC = () => {
   return (

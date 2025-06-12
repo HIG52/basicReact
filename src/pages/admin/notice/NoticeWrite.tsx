@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { apiService } from '../../services/api';
+import { apiService } from '../../../services/api';
 
 const NoticeWrite: React.FC = () => {
   const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ const NoticeWrite: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    const res = await apiService.createNotice({ title });
+    const res = await apiService.createNotice({ title, content });
     setLoading(false);
     if (res.success) {
       navigate('/admin/notice');
@@ -38,6 +39,19 @@ const NoticeWrite: React.FC = () => {
             value={title}
             onChange={e => setTitle(e.target.value)}
             style={{ width: '100%', marginBottom: 16 }}
+          />
+          <textarea
+            placeholder="내용을 입력하세요"
+            className="search-input"
+            value={content}
+            onChange={e => setContent(e.target.value)}
+            style={{ 
+              width: '100%', 
+              minHeight: 200, 
+              marginBottom: 16,
+              resize: 'vertical',
+              fontFamily: 'inherit'
+            }}
           />
           <div style={{ display: 'flex', gap: 8 }}>
             <button type="submit" className="write-btn" disabled={loading}>작성</button>

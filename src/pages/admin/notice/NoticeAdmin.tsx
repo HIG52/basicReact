@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import '../../styles/pages.css';
-import { apiService } from '../../services/api';
+import '../../../styles/pages.css';
+import { apiService } from '../../../services/api';
 
 interface Notice {
   id: number;
@@ -17,7 +17,8 @@ const NoticeAdmin: React.FC = () => {
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
-  const pageSize = 5;
+  const [totalPages, setTotalPages] = useState(1);
+  const pageSize = 10;
   const navigate = useNavigate();
 
   const fetchNotices = async () => {
@@ -25,12 +26,16 @@ const NoticeAdmin: React.FC = () => {
     setError('');
     try {
       const res = await apiService.getNotices(page, pageSize);
+      console.log('API 응답:', res);
       if (res.success) {
         setNotices(res.data?.notices || []);
+        setTotalPages(res.data?.totalPages || 1);
+        console.log('totalPages:', res.data?.totalPages, 'totalItems:', res.data?.totalItems);
       } else {
         setError(res.message);
       }
     } catch (e) {
+      console.error('API 호출 에러:', e);
       setError('공지사항 목록을 불러오지 못했습니다.');
     }
     setLoading(false);
@@ -50,8 +55,6 @@ const NoticeAdmin: React.FC = () => {
       alert(res.message || '삭제 실패');
     }
   };
-
-  const totalPages = 1; // 서버에서 totalPages 받아오면 적용
 
   if (loading) return <div>로딩중...</div>;
   if (error) return <div>{error}</div>;

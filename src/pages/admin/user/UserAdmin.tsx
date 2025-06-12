@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../../styles/pages.css';
-import { apiService } from '../../services/api';
+import '../../../styles/pages.css';
+import { apiService } from '../../../services/api';
 
 interface User {
   id: number;
